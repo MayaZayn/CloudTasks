@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "src",
+			"path": "."
+		},
+		{
+			"name": "New folder (2)",
+			"path": "../../../Desktop/New folder (2)"
+		},
+		{
+			"name": "server",
+			"path": "../server"
+		},
+		{
+			"name": "public",
+			"path": "../public"
+		}
+	],
+	"settings": {}
+}
