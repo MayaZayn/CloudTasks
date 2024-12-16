@@ -59,5 +59,34 @@ app.post("/unsubscribe", async (req, res) => {
   }
 });
 
+
+const firestore = admin.firestore();
+firestore.settings({
+  host: "localhost:8080", // Firestore emulator host (default: localhost:8080)
+  ssl: false, // Disable SSL (not needed for emulators)
+});
+
+app.post("/save-fcm-token", async (req, res) => {
+  const { userId, fcmToken } = req.body;
+
+  if (!userId || !fcmToken) {
+    return res.status(400).send("Invalid request.");
+  }
+
+  try {
+    // Save FCM token to Firestore
+    await firestore.collection("users").doc(userId).set(
+      { fcmToken },
+      { merge: true }
+    );
+    res.status(200).send("FCM token saved.");
+  } catch (error) {
+    console.error("Error saving FCM token:", error);
+    res.status(500).send("Error saving FCM token.");
+  }
+});
+
+
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

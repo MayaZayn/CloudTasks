@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase'; // Assuming firebase config exists
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { getToken } from "firebase/messaging";
+import { messaging } from "./firebase"; // Ensure messaging is initialized in firebase.js
+import { onMessage } from "firebase/messaging";
+
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   GoogleAuthProvider, 
   signInWithPopup,
-  sendPasswordResetEmail,
   RecaptchaVerifier,
   signInWithPhoneNumber
 } from 'firebase/auth';
+
+const analytics = getAnalytics();
 
 const AuthComponent = ({ onAuthSuccess }) => {
   const [email, setEmail] = useState('');
@@ -21,7 +27,9 @@ const AuthComponent = ({ onAuthSuccess }) => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
 
-useEffect(() => {
+
+
+  useEffect(() => {
     // More robust Recaptcha initialization
     const initRecaptcha = () => {
       if (recaptchaVerifier) return; // Avoid reinitializing if already set
@@ -35,7 +43,7 @@ useEffect(() => {
             console.error("Recaptcha Error", error);
           }
         });
-        
+  
         verifier.render().catch((renderError) => {
           console.error("Recaptcha Render Error", renderError);
         });
@@ -49,22 +57,38 @@ useEffect(() => {
     if (typeof window !== 'undefined') {
       initRecaptcha();
     }
-  }, []);
+  }, [recaptchaVerifier]); // Add recaptchaVerifier to the dependency array
+  
   
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
+      let userCredential;
+
       if (isLogin) {
         // Sign In
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        onAuthSuccess(userCredential.user);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
         // Sign Up
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        onAuthSuccess(userCredential.user);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
       }
+  
+      const user = userCredential.user;
+  
+      // Check for first-time login
+      if (user.metadata.lastSignInTime === user.metadata.creationTime) {
+        logEvent(analytics, "first_time_login", {
+          user_id: user.uid,
+          email: user.email,
+          login_method: "email",
+        });
+      }
+  
+      // Handle successful authentication
+      fcmMessages(user);
+      onAuthSuccess(user);
     } catch (error) {
       // More informative error handling
       switch (error.code) {
@@ -97,6 +121,15 @@ useEffect(() => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+      // Check for first-time login      
+      if (result.user.metadata.lastSignInTime === result.user.metadata.creationTime) {
+        logEvent(analytics, "first_time_login", {
+          user_id: result.user.uid,
+          email: result.user.email,
+          login_method: "google",
+        });
+      }
+      fcmMessages(result.user);
       onAuthSuccess(result.user);
     } catch (error) {
       setError('Google sign-in failed');
@@ -116,6 +149,7 @@ useEffect(() => {
 
     try {
       const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+      console.log(confirmationResult);
       setConfirmationResult(confirmationResult);
       setError(null);
       setAuthMethod('phone');
@@ -133,12 +167,39 @@ useEffect(() => {
 
     try {
       const result = await confirmationResult.confirm(otp);
+      
+      // Check for first-time login
+      if (result.user.metadata.lastSignInTime === result.user.metadata.creationTime) {
+        logEvent(analytics, "first_time_login", {
+          user_id: result.user.uid,
+          phone_number: result.user.phoneNumber,
+          login_method: "phone",
+        });
+      }
+      fcmMessages(result.user);
       onAuthSuccess(result.user);
     } catch (error) {
       setError('Invalid OTP. Please try again.');
       console.error("Error verifying OTP:", error);
     }
   };
+
+
+const fcmMessages = async (user) => {
+  try {
+    const fcmToken = await getToken(messaging, { 
+      vapidKey: "BO_tCqP6ByUVLrx1bvmfmCwEmHkIorFPyM_-z-JDarh8EkHcxqYYvnuErRMD2XsCtAd9WA412cRp3fbPWT50WKo",
+    });
+    console.log('fcmtoken',fcmToken);
+    onMessage(messaging, (payload) => {
+      console.log("Foreground message received:", payload);
+      alert(`Notification: ${payload.notification.title} - ${payload.notification.body}`);
+    });
+    
+  } catch (error) {
+    console.error("Error fetching FCM token:", error);
+  }
+};
 
   const renderAuthMethodSwitch = () => (
     <div style={{ 
