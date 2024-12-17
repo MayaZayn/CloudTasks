@@ -27,12 +27,4 @@ jobs:
       # Step 4: Build the app
       - name: Build the app
         run: npm run build  # Adjust build command to your project
-
-      # Step 5: Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build  # Specify the output directory of the build process
-
           
