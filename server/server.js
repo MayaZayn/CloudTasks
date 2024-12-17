@@ -6,18 +6,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize Firebase Admin SDK
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://cloud-tasks-8b225-default-rtdb.firebaseio.com"
 });
-
-// var serviceAccount = require("path/to/serviceAccountKey.json");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: "https://cloud-tasks-8b225-default-rtdb.firebaseio.com"
-// });
 
 
 // const verifyToken = async (req, res, next) => {

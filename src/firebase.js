@@ -5,14 +5,14 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyChgEcmw0IC2e16QgRNDTGg3--op7Tulgg",
-  authDomain: "cloudtasks-78a35.firebaseapp.com",
-  databaseURL: "https://cloudtasks-78a35-default-rtdb.firebaseio.com",
-  projectId: "cloudtasks-78a35",
-  storageBucket: "cloudtasks-78a35.firebasestorage.app",
-  messagingSenderId: "574895120284",
-  appId: "1:574895120284:web:c62e7b95ee79fcb2653259",
-  measurementId: "G-N22RFB552B"
+  apiKey: "AIzaSyASE0hSsbCkHebZoI64cVvmOB0E3cTnGFc",
+  authDomain: "cloud-tasks-8b225.firebaseapp.com",
+  databaseURL: "https://cloud-tasks-8b225-default-rtdb.firebaseio.com",
+  projectId: "cloud-tasks-8b225",
+  storageBucket: "cloud-tasks-8b225.firebasestorage.app",
+  messagingSenderId: "1096817042535",
+  appId: "1:1096817042535:web:5fb410038b335e8a2fa0c2",
+  measurementId: "G-ZY0M6H1RXZ"
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
