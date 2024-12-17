@@ -28,6 +28,11 @@ jobs:
       - name: Build the app
         run: npm run build  # Adjust build command to your project
 
+      - name: Authenticate with Firebase using service account key
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOUD_TASKS_8B225 }}"
+
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
