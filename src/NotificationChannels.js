@@ -12,7 +12,7 @@ const NotificationChannels = () => {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
       const token = await getToken(messaging, {
-        vapidKey: "BO_tCqP6ByUVLrx1bvmfmCwEmHkIorFPyM_-z-JDarh8EkHcxqYYvnuErRMD2XsCtAd9WA412cRp3fbPWT50WKo",
+        vapidKey: "BGAHGNKLBU6fIdqxGsI8hWBEBJsz9FrJM8-xgVC7pA6Ojenb9Q2snBe2eTZz1oXmAV9uqvKmXEV8i-_vP7N8SJ4",
       });
       console.log("FCM Token:", token);
     } else {
@@ -27,7 +27,7 @@ const NotificationChannels = () => {
   const subscribeToChannel = async (channel) => {
     try {
       const token = await getToken(messaging, {
-        vapidKey: "BO_tCqP6ByUVLrx1bvmfmCwEmHkIorFPyM_-z-JDarh8EkHcxqYYvnuErRMD2XsCtAd9WA412cRp3fbPWT50WKo",
+        vapidKey: "BGAHGNKLBU6fIdqxGsI8hWBEBJsz9FrJM8-xgVC7pA6Ojenb9Q2snBe2eTZz1oXmAV9uqvKmXEV8i-_vP7N8SJ4",
       });
 
       await fetch("http://localhost:5000/subscribe", {
@@ -47,7 +47,7 @@ const NotificationChannels = () => {
 
   const unsubscribeFromChannel = async (channel) => {
     const token = await getToken(messaging, {
-      vapidKey: "BO_tCqP6ByUVLrx1bvmfmCwEmHkIorFPyM_-z-JDarh8EkHcxqYYvnuErRMD2XsCtAd9WA412cRp3fbPWT50WKo",
+      vapidKey: "BGAHGNKLBU6fIdqxGsI8hWBEBJsz9FrJM8-xgVC7pA6Ojenb9Q2snBe2eTZz1oXmAV9uqvKmXEV8i-_vP7N8SJ4",
     });
     await fetch("http://localhost:5000/unsubscribe", {
       method: "POST",

@@ -188,7 +188,7 @@ const AuthComponent = ({ onAuthSuccess }) => {
 const fcmMessages = async (user) => {
   try {
     const fcmToken = await getToken(messaging, { 
-      vapidKey: "BO_tCqP6ByUVLrx1bvmfmCwEmHkIorFPyM_-z-JDarh8EkHcxqYYvnuErRMD2XsCtAd9WA412cRp3fbPWT50WKo",
+      vapidKey: "BGAHGNKLBU6fIdqxGsI8hWBEBJsz9FrJM8-xgVC7pA6Ojenb9Q2snBe2eTZz1oXmAV9uqvKmXEV8i-_vP7N8SJ4",
     });
     console.log('fcmtoken',fcmToken);
     onMessage(messaging, (payload) => {
